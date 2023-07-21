@@ -53,12 +53,11 @@ function runQuiz(quizData) {
   function displayQuestion() {
     const currentQuestion = quizData[currentQuestionIndex];
     if (!currentQuestion) {
-      // Tüm soruları gezdik, sonuçları göster
       showResult();
       return;
     }
 
-    questionElement.textContent = `Question ${currentQuestionIndex + 1}: ${currentQuestion.title}?`; // Soru numarasını ekle
+    questionElement.textContent = `Question ${currentQuestionIndex + 1}: ${currentQuestion.title}?`; // Soru numarası
     choicesList.innerHTML = '';
 
     const choices = ["A", "B", "C", "D"];
@@ -73,9 +72,8 @@ function runQuiz(quizData) {
 
     nextButton.style.display = 'none';
 
-    // 10 saniye sonra tıklamaları kabul et
      startTime = new Date().getTime();
-     timerElement.style.display = 'block'; // Timer'ı göster
+     timerElement.style.display = 'block';
      updateTimer(); 
      timerInterval = setInterval(updateTimer, 1000);
   }
@@ -83,14 +81,14 @@ function runQuiz(quizData) {
    function updateTimer() {
     const currentTime = new Date().getTime();
     const elapsedTime = currentTime - startTime;
-    const remainingTime = 30000 - elapsedTime; // Kalan süreyi 30 saniye olarak hesapla
+    const remainingTime = 30000 - elapsedTime; 
 
     if (remainingTime <= 0) {
       timerElement.textContent = 'Kalan süre: 0 saniye';
       clearInterval(timerInterval);
       const listItems = choicesList.getElementsByTagName('li');
       for (let i = 0; i < listItems.length; i++) {
-        listItems[i].addEventListener('click', handleAnswerClick); // Butonlara tıklamayı kabul et
+        listItems[i].addEventListener('click', handleAnswerClick); 
       }
     } else {
       timerElement.textContent = 'Remaining time: ' + (remainingTime / 1000).toFixed(0) + ' second';
@@ -98,7 +96,7 @@ function runQuiz(quizData) {
   }
 
   function handleAnswerClick(choiceIndex, correctChoiceIndex) {
-    clearInterval(timerInterval); // Cevap verildiğinde timer'ı durdur
+    clearInterval(timerInterval);
     userAnswers.push(choiceIndex);
     currentQuestionIndex++;
 
