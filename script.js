@@ -16,8 +16,7 @@ async function fetchQuizData() {
 function startQuiz() {
   const startButton = document.getElementById('start-button');
   const quizContainer = document.getElementById('quiz-container');
-  const resultContainer = document.getElementById('result-container');
-
+  
   startButton.addEventListener('click', async () => {
     startButton.style.display = 'none';
     quizContainer.style.display = 'block';
@@ -57,7 +56,7 @@ function runQuiz(quizData) {
       return;
     }
 
-    questionElement.textContent = `Question ${currentQuestionIndex + 1}: ${currentQuestion.title}?`; // Soru numarası
+    questionElement.textContent = `Question ${currentQuestionIndex + 1}: ${currentQuestion.title.charAt(0).toUpperCase() + currentQuestion.title.slice(1)}?`; // Soru numarası
     choicesList.innerHTML = '';
 
     const choices = ["A", "B", "C", "D"];
@@ -66,7 +65,8 @@ function runQuiz(quizData) {
     choices.forEach((choice, index) => {
       const listItem = document.createElement('li');
       listItem.textContent = choice + ". " + currentQuestion.body;
-      listItem.addEventListener('click', () => handleAnswerClick(index, currentQuestion.correctChoice));
+      listItem.addEventListener('click', () => handleAnswerClick(index));
+       listItem.addEventListener('click', () => handleAnswerClick(index, currentQuestion.correctChoice));
       choicesList.appendChild(listItem);
     });
 
@@ -82,20 +82,44 @@ function runQuiz(quizData) {
     const currentTime = new Date().getTime();
     const elapsedTime = currentTime - startTime;
     const remainingTime = 30000 - elapsedTime; 
-
     if (remainingTime <= 0) {
-      timerElement.textContent = 'Kalan süre: 0 saniye';
       clearInterval(timerInterval);
+      displayNextQuestion();
+    }else {
+      if (elapsedTime < 10000) {
+        // İlk 10 saniye içinde tıklamayı engelle
+        const listItems = choicesList.getElementsByTagName('li');
+        for (let i = 0; i < listItems.length; i++) {
+          listItems[i].style.pointerEvents = 'none';
+        }
+      } else {
+        // 10 saniyeden sonra tıklamaya izin ver
+        const listItems = choicesList.getElementsByTagName('li');
+        for (let i = 0; i < listItems.length; i++) {
+          listItems[i].style.pointerEvents = 'auto';
+        }   }
+      timerElement.textContent = 'Remaining time: ' + Math.max((remainingTime / 1000).toFixed(0), 0) + ' second';
+    }
+
+    function displayNextQuestion() {
       const listItems = choicesList.getElementsByTagName('li');
       for (let i = 0; i < listItems.length; i++) {
-        listItems[i].addEventListener('click', handleAnswerClick); 
+        listItems[i].removeEventListener('click', handleAnswerClick);
       }
-    } else {
-      timerElement.textContent = 'Remaining time: ' + (remainingTime / 1000).toFixed(0) + ' second';
+    
+      setTimeout(() => {
+        nextQuestion();
+      }, 1000);
     }
+    
+    function nextQuestion() {
+      currentQuestionIndex++;
+      displayQuestion();
+    }
+  
   }
 
-  function handleAnswerClick(choiceIndex, correctChoiceIndex) {
+   function handleAnswerClick(choiceIndex) {
     clearInterval(timerInterval);
     userAnswers.push(choiceIndex);
     currentQuestionIndex++;
@@ -115,8 +139,6 @@ function runQuiz(quizData) {
       return answer === quizData[index].correctChoice;
     }).length;
   
-    const totalScore = (numCorrectAnswers / quizData.length) * 100;
-    displayResultTable(userAnswers, totalScore);
   }
   
 
