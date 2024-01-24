@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color:rgb(163, 214, 211);
     margin: 0;
     padding: 0;
   }
@@ -12,17 +12,19 @@ body {
     background-color: #fff;
     padding: 20px;
     border: 1px solid #ccc;
+    border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-  
   #quiz-container h2, #result-container h2 {
     margin-top: 0;
     color: #4A55A2;
   }
   
   #start-button {
+    margin-left:auto;
+    margin-right:auto;
     display: block;
-    margin: 20px auto;
+    margin: 20% auto;
     padding: 10px 20px;
     background-color: #4A55A2;
     color: #fff;
@@ -34,7 +36,9 @@ body {
   #start-button:hover {
     background-color: #32436b;
   }
-  
+  #choices{
+    padding: 10px;
+  }
   #choices li {
     list-style-type: none;
     padding: 10px;
@@ -80,8 +84,8 @@ body {
     background-color: #C5DFF8;
   }
   
+
   #total-score {
     font-weight: bold;
     text-align: right;
   }
-  

@@ -16,7 +16,7 @@ async function fetchQuizData() {
 function startQuiz() {
   const startButton = document.getElementById('start-button');
   const quizContainer = document.getElementById('quiz-container');
-  
+
   startButton.addEventListener('click', async () => {
     startButton.style.display = 'none';
     quizContainer.style.display = 'block';
@@ -44,6 +44,9 @@ function runQuiz(quizData) {
   nextButton.addEventListener('click', handleNextButtonClick);
   const quizContainer = document.getElementById('quiz-container');
 
+  const choices = ["A", "B", "C", "D"];
+  const correctChoiceIndex = quizData[0].correctChoice; 
+
   function handleNextButtonClick() {
     currentQuestionIndex++;
     displayQuestion();
@@ -58,15 +61,11 @@ function runQuiz(quizData) {
 
     questionElement.textContent = `Question ${currentQuestionIndex + 1}: ${currentQuestion.title.charAt(0).toUpperCase() + currentQuestion.title.slice(1)}?`; // Soru numarası
     choicesList.innerHTML = '';
-
-    const choices = ["A", "B", "C", "D"];
-
     
     choices.forEach((choice, index) => {
       const listItem = document.createElement('li');
       listItem.textContent = choice + ". " + currentQuestion.body;
-      listItem.addEventListener('click', () => handleAnswerClick(index));
-       listItem.addEventListener('click', () => handleAnswerClick(index, currentQuestion.correctChoice));
+      listItem.addEventListener('click', () => handleAnswerClick(index, currentQuestion.correctChoice));
       choicesList.appendChild(listItem);
     });
 
@@ -78,7 +77,7 @@ function runQuiz(quizData) {
      timerInterval = setInterval(updateTimer, 1000);
   }
 
-   function updateTimer() {
+  function updateTimer() {
     const currentTime = new Date().getTime();
     const elapsedTime = currentTime - startTime;
     const remainingTime = 30000 - elapsedTime; 
@@ -86,18 +85,19 @@ function runQuiz(quizData) {
       clearInterval(timerInterval);
       displayNextQuestion();
     }else {
-      if (elapsedTime < 10000) {
-        // İlk 10 saniye içinde tıklamayı engelle
+       if (elapsedTime < 10000) {
+         // İlk 10 saniye içinde tıklamayı engelle
         const listItems = choicesList.getElementsByTagName('li');
-        for (let i = 0; i < listItems.length; i++) {
-          listItems[i].style.pointerEvents = 'none';
-        }
+         for (let i = 0; i < listItems.length; i++) {
+           listItems[i].style.pointerEvents = 'none';
+          }
       } else {
-        // 10 saniyeden sonra tıklamaya izin ver
-        const listItems = choicesList.getElementsByTagName('li');
-        for (let i = 0; i < listItems.length; i++) {
-          listItems[i].style.pointerEvents = 'auto';
-        }   }
+         // 10 saniyeden sonra tıklamaya izin ver
+         const listItems = choicesList.getElementsByTagName('li');
+         for (let i = 0; i < listItems.length; i++) {
+           listItems[i].style.pointerEvents = 'auto';
+         }   
+      }
       timerElement.textContent = 'Remaining time: ' + Math.max((remainingTime / 1000).toFixed(0), 0) + ' second';
     }
 
@@ -119,11 +119,11 @@ function runQuiz(quizData) {
   
   }
 
-   function handleAnswerClick(choiceIndex) {
+  function handleAnswerClick(choiceIndex, correctChoiceIndex) {
     clearInterval(timerInterval);
     userAnswers.push(choiceIndex);
     currentQuestionIndex++;
-
+  
     if (currentQuestionIndex === quizData.length) {
       showResult();
     } else {
@@ -135,14 +135,9 @@ function runQuiz(quizData) {
     quizContainer.style.display = 'none';
     resultContainer.style.display = 'block';
   
-    const numCorrectAnswers = userAnswers.filter((answer, index) => {
-      return answer === quizData[index].correctChoice;
-    }).length;
-  
-  }
-  
+    const choices = ["A", "B", "C", "D"];
 
-  function displayResultTable(userAnswers, choices) {
+    // Tabloyu oluştur
     const tableBody = resultTable.querySelector('tbody');
     tableBody.innerHTML = '';
 
@@ -158,15 +153,21 @@ function runQuiz(quizData) {
       
       row.appendChild(questionCell);
       row.appendChild(userAnswerCell);
-      row.appendChild(correctAnswerCell);
+
+      if (userAnswers[i] === quizData[i].correctChoice) {
+        userAnswerCell.style.color = 'green';  // Kullanıcının doğru cevap verdiği hücreyi yeşil yap
+      } else {
+        userAnswerCell.style.color = 'red';    // Kullanıcının yanlış cevap verdiği hücreyi kırmızı yap
+      }
+  
 
       tableBody.appendChild(row);
     }
 
-   
   }
 
   displayQuestion();
 }
 
 startQuiz();
+
